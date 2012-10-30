@@ -2,11 +2,6 @@ import re
 from pymongo import Connection
 
 
-connection = Connection()
-db = connection.wordlearn
-db.drop_collection('words')
-db.words.ensure_index('word')
-
 def remove_html_tags(content):
     return re.sub('<[^<]+?>', ' ', content)
 
@@ -23,16 +18,22 @@ def filter_words(sentence):
     return [word for word in words if not word in english_stopwords and simple_word.match(word)]
 
 
-def dump_words(words):
+def dump_words(db, words):
     for w in words:
         db.words.update({'word': w}, {'$inc': {'occurrences': 1}}, True)
 
 
 if __name__ == '__main__':
     from libepub.book import Book
-    book = Book('Being_Geek.epub')
+
+    connection = Connection()
+    db = connection.wordlearn
+    db.drop_collection('words')
+    db.words.ensure_index('word')
+
+    book = Book('../Being_Geek.epub')
     for c in book.chapters[10:]:
-        dump_words(filter_words(remove_html_tags(c.content)))
+        dump_words(db, filter_words(remove_html_tags(c.content)))
 
     print 'Top words in this book:'
     for w in db.words.find().sort('occurrences', -1).limit(20):
