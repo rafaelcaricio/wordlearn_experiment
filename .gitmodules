@@ -1,0 +1,3 @@
+[submodule "libepub"]
+	path = libepub
+	url = git://github.com/jharjono/libepub.git
