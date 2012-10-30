@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>Most common words</title>
+</head>
+<body>
+    <h1>Most common words in current book</h1>
+    <ul class="words_list">
+    {% for word in top_words %}
+        <li>{{ word.word }} <strong>{{ word.occurrences }}</strong></li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
