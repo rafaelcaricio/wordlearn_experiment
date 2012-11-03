@@ -1,14 +1,20 @@
-from flask import Flask, render_template
-from flask.ext.pymongo import PyMongo
+import redis
+from flask import Flask, request, render_template
+
+import keys
 
 
 app = Flask('wordlearn')
-mongo = PyMongo(app)
+db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home_page():
-    top_words = mongo.db.words.find().sort('occurrences', -1).limit(40)
+    if request.method == 'POST':
+        word = request.form['w']
+        db.zrem(keys.TOP_WORDS_IN_BOOK, word)
+        db.sadd(keys.WORDS_I_KNOW, word)
+    top_words = db.zrange(keys.TOP_WORDS_IN_BOOK, 0, 40, desc=True, withscores=True, score_cast_func=int)
     return render_template('words_list.html', top_words=top_words)
 
 

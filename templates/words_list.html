@@ -5,10 +5,19 @@
 </head>
 <body>
     <h1>Most common words in current book</h1>
-    <ul class="words_list">
-    {% for word in top_words %}
-        <li>{{ word.word }} <strong>{{ word.occurrences }}</strong></li>
+    <table class="words_list">
+    {% for word, count in top_words %}
+    <tr>
+        <td style="width: 150px">{{ word }}</td>
+        <td><strong>{{ count }}</strong></td>
+        <td>
+        <form method="POST" action="">
+            <input type="hidden" name="w" value="{{ word }}">
+            <button style="width: 100px; height: 50px;" type="submit">I know</button>
+        </form>
+        </td>
+    </tr>
     {% endfor %}
-    </ul>
+    </table>
 </body>
 </html>
